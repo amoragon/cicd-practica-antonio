@@ -30,7 +30,8 @@ pipeline {
                         [[ $(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
                         terraform workspace new dev && \
                         terraform workspace select dev && \
-                        terraform apply -var="environment=dev" -auto-approve
+                        terraform apply -var="environment=dev" -auto-approve ||
+                        echo "Ya existe el bucket"
                     '''
                 }
             }
