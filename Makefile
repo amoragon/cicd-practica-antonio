@@ -17,7 +17,7 @@ dev: create-ws-dev bucket-dev
 # Creates DEV workspace
 create-ws-dev:
 	cd infra && \
-	[ $$(terraform workspace list | grep dev | wc -w) -lt 1 ] && \
+	[[ $$(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
 	terraform workspace new dev
 
 # Creates DEV S3 bucket
@@ -66,7 +66,7 @@ prod: create-ws-prod bucket-prod
 # Creates PROD workspace
 create-ws-prod:
 	cd infra && \
-	[ $$(terraform workspace list | grep prod | wc -w) -lt 1 ] && \
+	[ $$(terraform workspace list | grep prod | wc -l) -eq 0 ] && \
 	terraform workspace new prod
 
 # Creates PROD S3 bucket
