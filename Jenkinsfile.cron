@@ -1,0 +1,43 @@
+pipeline {
+    agent {
+        label 'terraform'
+    }
+
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('terraform-secrety-key')
+        AWS_SECRET_ACCESS_KEY = credentials('terraform-secret-access-key')
+    }
+
+    options {
+        timestamps()
+    }
+
+    triggers {
+        cron(*/2 * * * *)
+    }
+
+    stages {
+        stage('Check bucket size in DEV bucket') {
+            steps {
+                dir('infra') {
+                    sh '''
+                        date
+                    '''
+                }
+            }
+
+            
+        }
+
+        stage('Check bucket size in PROD bucket') {
+            steps {
+                dir('infra') {
+                    sh '''
+                        date
+                    '''
+                }
+            }
+        }
+    }
+}
+

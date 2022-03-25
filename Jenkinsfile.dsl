@@ -14,3 +14,20 @@ pipelineJob('S3 Buckets') {
         }
     }
 }
+
+pipelineJob('Check Buckets Size') {
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        credentials("jenkins-token")
+                        url("https://github.com/amoragon/cicd-practica-antonio.git")
+                    }
+                    branches("main")
+                    scriptPath('Jenkinsfile.cron')
+                }
+            }
+        }
+    }
+}
