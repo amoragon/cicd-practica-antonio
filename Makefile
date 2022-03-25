@@ -1,11 +1,5 @@
-all: all-dev all-prod
-clean: clean-dev clean-prod
-
-#############################
-## DEV ENVIRONMENT TARGETS ##
-#############################
-
-all-dev: clean-dev dev
+all: clean-dev dev
+clean: clean-dev
 
 # ----------------------------
 # 1.- Creation bucket process
@@ -51,55 +45,3 @@ remove-ws-dev:
 	terraform workspace select default && \
 	terraform workspace delete dev || \
 	echo "No existe el workspace dev. No se puede eliminar."
-
-####################################
-## PRODUCTION ENVIRONMENT TARGETS ##
-####################################
-
-all-prod: clean-prod prod
-
-# ----------------------------
-# 1.- Creation bucket process
-# ----------------------------
-
-# Creates PROD workspace and bucket 
-prod: create-ws-prod bucket-prod
-
-# Creates PROD workspace
-create-ws-prod:
-	cd infra && \
-	terraform init \
-	[ $$(terraform workspace list | grep prod | wc -l) -eq 0 ] && \
-	terraform workspace new prod
-
-# Creates PROD S3 bucket
-bucket-prod:
-	cd infra && \
-	terraform workspace select prod && \
-	terraform apply -var="environment=prod" -auto-approve || \
-	echo "Ya existe el bucket"
-
-# ----------------------------
-# 2.- Cleaning bucket process
-# ----------------------------
-
-# Clean PROD environment
-clean-prod: remove-objects-prod remove-ws-prod
-
-# Removes objects in PROD S3 bucket
-remove-objects-prod:
-	@echo "Borrando objetos del bucket kc-acme-storage-prod..." && \
-	[[ $$(aws s3 ls s3://kc-acme-storage-prod 2>&1 | grep "NoSuchBucket" | wc -l) -eq 0 ]] && \
-    aws s3 rm s3://kc-acme-storage-prod --recursive  || \
-    echo "No existe el bucket" 
-
-# Removes PROD bucket and workspace, if workspace exists
-remove-ws-prod:
-	@cd infra && \
-	[[ $$(terraform workspace list | grep prod | wc -w) -gt 0 ]] && \
-	terraform workspace select prod && \
-	terraform destroy -var="environment=prod" -auto-approve && \
-	terraform workspace select default && \
-	terraform workspace delete prod || \
-	echo "No existe el workspace prod. No se puede eliminar."
-

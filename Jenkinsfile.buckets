@@ -33,14 +33,17 @@ pipeline {
         stage('Production') {
             steps {
                 dir('infra') {
-                    sh '''
-                        terraform init 
-                        [[ $(terraform workspace list | grep prod | wc -l) -eq 0 ]] && \
-                        terraform workspace new prod && \
-                        terraform workspace select prod && \
-                        terraform apply -var="environment=prod" -auto-approve ||
-                        echo "Ya existe el bucket"
-                    '''
+                    timeout(time: 1, unit: 'MINUTES') {
+                        input message: 'Do you want to create PROD env bucket?', ok: 'Yes, create bucket.'
+                            sh '''
+                            terraform init 
+                            [[ $(terraform workspace list | grep prod | wc -l) -eq 0 ]] && \
+                            terraform workspace new prod && \
+                            terraform workspace select prod && \
+                            terraform apply -var="environment=prod" -auto-approve ||
+                            echo "Ya existe el bucket"
+                            '''
+                    }
                 }
             }
         }
