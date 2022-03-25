@@ -83,8 +83,8 @@ bucket-prod:
 clean-prod: remove-objects-prod remove-ws-prod
 
 # Removes objects in PROD S3 bucket
-remove-objects-dev:
-	@echo "Borrando objetos del bucket kc-acme-storage-prd..." && \
+remove-objects-prod:
+	@echo "Borrando objetos del bucket kc-acme-storage-prod..." && \
 	[[ $$(aws s3 ls s3://kc-acme-storage-prod 2>&1 | grep "NoSuchBucket" | wc -l) -eq 0 ]] && \
     aws s3 rm s3://kc-acme-storage-prod --recursive  || \
     echo "No existe el bucket" 
