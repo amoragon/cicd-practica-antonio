@@ -8,10 +8,6 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('terraform-secret-access-key')
     }
 
-    options {
-        timestamps()
-    }
-
     triggers {
         cron(*/2 * * * *)
     }
@@ -21,19 +17,7 @@ pipeline {
             steps {
                 dir('infra') {
                     sh '''
-                        date
-                    '''
-                }
-            }
-
-            
-        }
-
-        stage('Check bucket size in PROD bucket') {
-            steps {
-                dir('infra') {
-                    sh '''
-                        date
+                        echo "hola"
                     '''
                 }
             }
