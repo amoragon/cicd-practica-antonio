@@ -27,7 +27,7 @@ pipeline {
                 dir('infra') {
                     sh '''
                         terraform init 
-                        [ $(terraform workspace list | grep dev | wc -l) -eq 0 ] && \
+                        [[ $(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
                         terraform workspace new dev && \
                         terraform workspace select dev && \
                         terraform apply -var="environment=dev" -auto-approve
