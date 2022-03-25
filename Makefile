@@ -8,7 +8,7 @@ clean: clean-dev clean-prod
 all-dev: clean-dev dev
 
 # ----------------------------
-# 1.- Creation bucket process
+# 1.- Cleaning bucket process
 # ----------------------------
 
 # Creates DEV workspace and bucket 
@@ -57,7 +57,7 @@ remove-ws-dev:
 all-prod: clean-prod prod
 
 # ----------------------------
-# 1.- Creation bucket process
+# 1.- Cleaning bucket process
 # ----------------------------
 
 # Creates PROD workspace and bucket 
