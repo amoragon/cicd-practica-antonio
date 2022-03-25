@@ -35,10 +35,10 @@ pipeline {
                 dir('infra') {
                     sh '''
                         terraform init 
-                        [[ $(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
-                        terraform workspace new dev && \
-                        terraform workspace select dev && \
-                        terraform apply -var="environment=dev" -auto-approve ||
+                        [[ $(terraform workspace list | grep prod | wc -l) -eq 0 ]] && \
+                        terraform workspace new prod && \
+                        terraform workspace select prod && \
+                        terraform apply -var="environment=prod" -auto-approve ||
                         echo "Ya existe el bucket"
                     '''
                 }
