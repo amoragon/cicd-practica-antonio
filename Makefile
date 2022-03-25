@@ -8,7 +8,7 @@ clean: clean-dev clean-prod
 all-dev: clean-dev dev
 
 # ----------------------------
-# 1.- Cleaning bucket process
+# 1.- Creation bucket process
 # ----------------------------
 
 # Creates DEV workspace and bucket 
@@ -17,6 +17,7 @@ dev: create-ws-dev bucket-dev
 # Creates DEV workspace
 create-ws-dev:
 	cd infra && \
+	terraform init && \
 	[[ $$(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
 	terraform workspace new dev
 
@@ -24,10 +25,11 @@ create-ws-dev:
 bucket-dev:
 	cd infra && \
 	terraform workspace select dev && \
-	terraform apply -var="environment=dev" -auto-approve
+	terraform apply -var="environment=dev" -auto-approve || \
+	echo "Ya existe el bucket"
 	
 # ----------------------------
-# 2.- Creation bucket process
+# 2.- Cleaning bucket process
 # ----------------------------
 
 # Clean DEV environment
@@ -57,7 +59,7 @@ remove-ws-dev:
 all-prod: clean-prod prod
 
 # ----------------------------
-# 1.- Cleaning bucket process
+# 1.- Creation bucket process
 # ----------------------------
 
 # Creates PROD workspace and bucket 
@@ -66,6 +68,7 @@ prod: create-ws-prod bucket-prod
 # Creates PROD workspace
 create-ws-prod:
 	cd infra && \
+	terraform init \
 	[ $$(terraform workspace list | grep prod | wc -l) -eq 0 ] && \
 	terraform workspace new prod
 
@@ -73,10 +76,11 @@ create-ws-prod:
 bucket-prod:
 	cd infra && \
 	terraform workspace select prod && \
-	terraform apply -var="environment=prod" -auto-approve
+	terraform apply -var="environment=prod" -auto-approve || \
+	echo "Ya existe el bucket"
 
 # ----------------------------
-# 2.- Creation bucket process
+# 2.- Cleaning bucket process
 # ----------------------------
 
 # Clean PROD environment
