@@ -9,11 +9,6 @@ pipeline {
         BUCKET_SIZE_LIMIT = 2 * 1024 * 1024
     }
 
-/*    triggers {
-        cron('*/2 * * * *')
-    }
-*/
-
     stages {
         stage('Check bucket size in DEV bucket') {
             steps {
