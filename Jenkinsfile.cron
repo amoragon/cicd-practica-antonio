@@ -6,7 +6,7 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('terraform-secrety-key')
         AWS_SECRET_ACCESS_KEY = credentials('terraform-secret-access-key')
-        BUCKET_SIZE_LIMIT = 2 * 1024 * 1024
+        def BUCKET_SIZE_LIMIT = 2 * 1024 * 1024
     }
 
     stages {
