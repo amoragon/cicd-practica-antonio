@@ -9,6 +9,10 @@ pipeline {
         BUCKET_SIZE_LIMIT = 2097152 // 20 MiB in bytes
     }
 
+    triggers { 
+        cron('*/10 * * * *') 
+    }
+
     stages {
         stage('Check bucket size in DEV bucket') {
             steps {
