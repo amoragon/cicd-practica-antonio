@@ -6,18 +6,20 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('terraform-secrety-key')
         AWS_SECRET_ACCESS_KEY = credentials('terraform-secret-access-key')
+        BUCKET_SIZE_LIMIT = 2 * 1024 * 1024
     }
 
-    triggers {
+/*    triggers {
         cron('*/2 * * * *')
     }
+*/
 
     stages {
         stage('Check bucket size in DEV bucket') {
             steps {
                 dir('infra') {
                     sh '''
-                        echo "hola"
+                        echo BUCKET_SIZE_LIMIT
                     '''
                 }
             }
