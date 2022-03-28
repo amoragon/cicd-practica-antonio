@@ -13,21 +13,48 @@ pipeline {
     }
 
     stages {
-        stage('Development') {
+        stage('Development - Init') {
             steps {
                 dir('infra') {
                     sh '''
                         terraform init 
+                   '''
+                }
+            }
+        }
+
+        stage('Development - Format') {
+            steps {
+                dir('infra') {
+                    sh '''
+                        terraform fmt -check -var="environment=dev"
+                   '''
+                }
+            }
+        }
+        
+        stage('Development - Plan') {
+            steps {
+                dir('infra') {
+                    sh '''
+                        terraform plan -var="environment=dev"
+                   '''
+                }
+            }
+        }
+
+        stage('Development - Apply') {
+            steps {
+                dir('infra') {
+                    sh '''
                         [[ $(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
                         terraform workspace new dev && \
                         terraform workspace select dev && \
                         terraform apply -var="environment=dev" -auto-approve ||
-                        echo "Ya existe el bucket"
+                        echo "Ya existe el workspace"
                     '''
                 }
             }
-
-            
         }
 
         stage('Production') {
@@ -41,7 +68,7 @@ pipeline {
                             terraform workspace new prod && \
                             terraform workspace select prod && \
                             terraform apply -var="environment=prod" -auto-approve ||
-                            echo "Ya existe el bucket"
+                            echo "Ya existe el workspace"
                             '''
                     }
                 }

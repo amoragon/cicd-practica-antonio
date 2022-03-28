@@ -12,7 +12,7 @@ variable "environment" {
 }
 
 variable "aws_region" {
- description = "AWS Region"
- type = string
- default = "eu-west-1"
+  description = "AWS Region"
+  type        = string
+  default     = "eu-west-1"
 }
