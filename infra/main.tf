@@ -9,12 +9,12 @@ terraform {
   backend "s3" {
     bucket = "kc-terraform-backend"
     key    = "backend"
-    region = "eu-west-1"
+    region = var.aws_region
   }
 }
 
 provider "aws" {
-  region = "eu-west-1"
+  region = var.aws_region
 }
 
 resource "aws_s3_bucket" "kc_acme_storage" {
