@@ -39,7 +39,7 @@ pipeline {
             steps {
                 dir('infra') {
                     sh '''
-                        terraform fmt -check -var-file="dev.tfvars"
+                        terraform fmt -check
                    '''
                 }
             }
