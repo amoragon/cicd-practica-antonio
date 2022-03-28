@@ -92,6 +92,8 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       working-directory: ./infra
+      env:
+        TF_VAR_env: 'dev'      
       run: terraform plan
 
       # On push to main, build or change infrastructure according to Terraform configuration files
