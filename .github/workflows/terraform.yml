@@ -102,4 +102,9 @@ jobs:
     - name: Terraform Apply
       working-directory: ./infra
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve
+      run: |
+        [[ $(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
+        terraform workspace new dev && \
+        terraform workspace select dev && \
+        terraform apply -var="environment=dev" -auto-approve ||
+        echo "Ya existe el bucket"
