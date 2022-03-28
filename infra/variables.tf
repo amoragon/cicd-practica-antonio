@@ -11,6 +11,11 @@ variable "environment" {
   type        = string
 }
 
+variable "acl" {
+  description = "S3 bucket canned ACL"
+  type        = string
+}
+
 variable "aws_region" {
   description = "AWS Region"
   type        = string
