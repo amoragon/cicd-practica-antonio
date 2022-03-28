@@ -9,7 +9,7 @@ terraform {
   backend "s3" {
     bucket = "kc-terraform-backend"
     key    = "backend"
-    region = var.aws_region
+    region = "eu-west-1"
   }
 }
 
