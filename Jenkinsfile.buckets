@@ -59,11 +59,7 @@ pipeline {
             steps {
                 dir('infra') {
                     sh '''
-                        //[[ $(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
-                        //terraform workspace new dev && \
-                        //terraform workspace select dev && \
-                        terraform apply -var-file="dev.tfvars" -auto-approve //||
-                        //echo "Ya existe el workspace"
+                        terraform apply -var-file="dev.tfvars" -auto-approve 
                     '''
                 }
             }
