@@ -23,6 +23,18 @@ pipeline {
             }
         }
 
+        stage('Development - Workspace create/select') {
+            steps {
+                dir('infra') {
+                    sh '''
+                        [[ $(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
+                        terraform workspace new dev || \
+                        terraform workspace select dev
+                    '''
+                }
+            }
+        }
+
         stage('Development - Format') {
             steps {
                 dir('infra') {
@@ -47,11 +59,11 @@ pipeline {
             steps {
                 dir('infra') {
                     sh '''
-                        [[ $(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
-                        terraform workspace new dev && \
-                        terraform workspace select dev && \
-                        terraform apply -var="environment=dev" -auto-approve ||
-                        echo "Ya existe el workspace"
+                        //[[ $(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
+                        //terraform workspace new dev && \
+                        //terraform workspace select dev && \
+                        terraform apply -var="environment=dev" -auto-approve //||
+                        //echo "Ya existe el workspace"
                     '''
                 }
             }
