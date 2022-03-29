@@ -10,7 +10,6 @@ on:
       okProdBucket:
         description: 'Deploy PROD bucket?'
         required: true
-        default: 'no' 
         type: choice
         options:
         - yes
