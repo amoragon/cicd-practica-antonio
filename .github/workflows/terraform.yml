@@ -111,4 +111,3 @@ jobs:
       working-directory: ./infra
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -var-file="prod.tfvars" -auto-approve
-
