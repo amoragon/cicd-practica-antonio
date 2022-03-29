@@ -32,7 +32,7 @@ resource "aws_s3_bucket_acl" "kc_acme_storage_acl" {
 }
 
 resource "random_string" "suffix" {
-  length           = 8
-  special          = false
-  upper            = false
+  length  = 8
+  special = false
+  upper   = false
 }
