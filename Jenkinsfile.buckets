@@ -45,7 +45,8 @@ pipeline {
             steps {
                 dir('infra') {
                     sh '''
-                        terraform fmt -check
+                        terraform fmt -check || \
+                        echo "Revisa el formato de los ficheros terraform"
                    '''
                 }
             }
@@ -101,7 +102,8 @@ pipeline {
             steps {
                 dir('infra') {
                     sh '''
-                        terraform fmt -check
+                        terraform fmt -check || \
+                        echo "Revisa el formato de los ficheros terraform"
                    '''
                 }
             }
