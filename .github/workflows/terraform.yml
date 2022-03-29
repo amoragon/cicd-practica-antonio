@@ -13,8 +13,8 @@ on:
         type: choice
         default: no
         options:
-        - eeoo
-        - aabb
+        - yes
+        - no
 
 jobs:
 
@@ -120,6 +120,7 @@ jobs:
     - name: Terraform Apply
       working-directory: ./infra
       #if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
+      if: github.event.inputs.okProdBucket == 'yes'
       run: |
         echo ${{ github.event.inputs.okProdBucket }}
         terraform apply -var-file="prod.tfvars" -auto-approve
