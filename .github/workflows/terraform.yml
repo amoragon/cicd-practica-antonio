@@ -1,48 +1,4 @@
-# This workflow installs the latest version of Terraform CLI and configures the Terraform CLI configuration file
-# with an API token for Terraform Cloud (app.terraform.io). On pull request events, this workflow will run
-# `terraform init`, `terraform fmt`, and `terraform plan` (speculative plan via Terraform Cloud). On push events
-# to the main branch, `terraform apply` will be executed.
-#
-# Documentation for `hashicorp/setup-terraform` is located here: https://github.com/hashicorp/setup-terraform
-#
-# To use this workflow, you will need to complete the following setup steps.
-#
-# 1. Create a `main.tf` file in the root of this repository with the `remote` backend and one or more resources defined.
-#   Example `main.tf`:
-#     # The configuration for the `remote` backend.
-#     terraform {
-#       backend "remote" {
-#         # The name of your Terraform Cloud organization.
-#         organization = "example-organization"
-#
-#         # The name of the Terraform Cloud workspace to store Terraform state files in.
-#         workspaces {
-#           name = "example-workspace"
-#         }
-#       }
-#     }
-#
-#     # An example resource that does nothing.
-#     resource "null_resource" "example" {
-#       triggers = {
-#         value = "A example resource that does nothing!"
-#       }
-#     }
-#
-#
-# 2. Generate a Terraform Cloud user API token and store it as a GitHub secret (e.g. TF_API_TOKEN) on this repository.
-#   Documentation:
-#     - https://www.terraform.io/docs/cloud/users-teams-organizations/api-tokens.html
-#     - https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets
-#
-# 3. Reference the GitHub secret in step using the `hashicorp/setup-terraform` GitHub Action.
-#   Example:
-#     - name: Setup Terraform
-#       uses: hashicorp/setup-terraform@v1
-#       with:
-#         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-name: 'Terraform'
+name: 'S3 Buckets'
 
 on:
   push:
@@ -51,10 +7,15 @@ on:
   pull_request:
 
 jobs:
+
+  #####################
+  ## DEV environment ##
+  #####################
+
   s3-dev-bucket:
     name: 'S3 Dev Bucket'
     runs-on: ubuntu-latest
-    environment: production
+    environment: development
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -101,5 +62,63 @@ jobs:
         [[ $(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
         terraform workspace new dev && \
         terraform workspace select dev && \
-        terraform apply -var="environment=dev" -auto-approve ||
+        terraform apply -var-file="dev.tfvars" -auto-approve ||
         echo "Ya existe el bucket"
+
+  ############################
+  ## PRODUCTION environment ##
+  ############################
+  
+  s3-prod-bucket:
+    name: 'S3 Prod Bucket'
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+  
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-1
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      working-directory: ./infra
+      run: terraform init
+    
+    - name: Create PROD Terraform Workspace
+      working-directory: ./infra
+      run: |
+        [[ $(terraform workspace list | grep prod | wc -l) -eq 0 ]] && \
+        terraform workspace new prod || \
+        terraform workspace select prod
+
+    - name: Terraform Format
+      working-directory: ./infra
+      run: terraform fmt -check
+
+    - name: Terraform PROD Plan
+      working-directory: ./infra           
+      run: terraform plan -var-file="prod.tfvars"
+
+      # On push to main, build or change infrastructure according to Terraform configuration files
+    - name: Terraform Apply
+      working-directory: ./infra
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        [[ $(terraform workspace list | grep prod | wc -l) -eq 0 ]] && \
+        terraform workspace new prod && \
+        terraform workspace select prod && \
+        terraform apply -var-file="prod.tfvars" -auto-approve ||
+        echo "Ya existe el bucket"
+
