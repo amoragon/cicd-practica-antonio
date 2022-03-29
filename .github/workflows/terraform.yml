@@ -11,10 +11,10 @@ on:
         description: 'Deploy PROD bucket?'
         required: true
         type: choice
-        default: no
+        default: abort
         options:
-        - si
-        - no
+        - proceed
+        - abort
 
 jobs:
 
@@ -119,7 +119,7 @@ jobs:
       # On push to main, build or change infrastructure according to Terraform configuration file
     - name: Terraform Apply
       working-directory: ./infra
-      if: ${{ github.event.inputs.okProdBucket == 'si' }}
+      if: ${{ github.event.inputs.okProdBucket == 'proceed' }}
       run: |
         echo ${{ github.event.inputs.okProdBucket }}
         terraform apply -var-file="prod.tfvars" -auto-approve
