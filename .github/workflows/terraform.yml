@@ -106,7 +106,7 @@ jobs:
       working-directory: ./infra           
       run: terraform plan -var-file="prod.tfvars"
 
-      # On push to main, build or change infrastructure according to Terraform configuration files
+      # On push to main, build or change infrastructure according to Terraform configuration file
     - name: Terraform Apply
       working-directory: ./infra
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
