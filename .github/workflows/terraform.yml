@@ -58,12 +58,7 @@ jobs:
     - name: Terraform Apply
       working-directory: ./infra
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: |
-        [[ $(terraform workspace list | grep dev | wc -l) -eq 0 ]] && \
-        terraform workspace new dev && \
-        terraform workspace select dev && \
-        terraform apply -var-file="dev.tfvars" -auto-approve ||
-        echo "Ya existe el bucket"
+      run: terraform apply -var-file="dev.tfvars" -auto-approve
 
   ############################
   ## PRODUCTION environment ##
@@ -115,10 +110,5 @@ jobs:
     - name: Terraform Apply
       working-directory: ./infra
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: |
-        [[ $(terraform workspace list | grep prod | wc -l) -eq 0 ]] && \
-        terraform workspace new prod && \
-        terraform workspace select prod && \
-        terraform apply -var-file="prod.tfvars" -auto-approve ||
-        echo "Ya existe el bucket"
+      run: terraform apply -var-file="prod.tfvars" -auto-approve
 
