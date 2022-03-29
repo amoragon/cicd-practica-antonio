@@ -10,11 +10,7 @@ on:
       okProdBucket:
         description: 'Deploy PROD bucket?'
         required: true
-        type: choice
-        default: no
-        options:
-        - yes
-        - no
+        type: boolean
 
 jobs:
 
@@ -78,6 +74,7 @@ jobs:
     name: 'S3 Prod Bucket'
     runs-on: ubuntu-latest
     environment: production
+    needs: [s3-dev-bucket]
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -119,8 +116,8 @@ jobs:
       # On push to main, build or change infrastructure according to Terraform configuration file
     - name: Terraform Apply
       working-directory: ./infra
-      #if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
-      if: ${{ github.event.inputs.okProdBucket == 'yes' }}
+      # if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
+      if: ${{ github.event.inputs.okProdBucket == 'true' }}
       run: |
         echo ${{ github.event.inputs.okProdBucket }}
         terraform apply -var-file="prod.tfvars" -auto-approve
