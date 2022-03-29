@@ -11,6 +11,7 @@ on:
         description: 'Deploy PROD bucket?'
         required: true
         type: choice
+        default: no
         options:
         - yes
         - no
@@ -118,5 +119,7 @@ jobs:
       # On push to main, build or change infrastructure according to Terraform configuration file
     - name: Terraform Apply
       working-directory: ./infra
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push' && github.event.inputs.okProdBucket == 'yes' 
-      run: terraform apply -var-file="prod.tfvars" -auto-approve
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
+      run: |
+        echo ${{ github.event.inputs.okProdBucket }}
+        terraform apply -var-file="prod.tfvars" -auto-approve
