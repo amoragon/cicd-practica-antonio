@@ -5,23 +5,16 @@ on:
     branches:
     - main
   pull_request:
-#  workflow_dispatch:
-#    inputs:
-#      okProdBucket:
-#        description: 'Deploy PROD bucket?'
-#        required: true
-#        type: choice
-#        default: abort
-#        options:
-#        - proceed
-#        - abort
-  workflow_call:
+  workflow_dispatch:
     inputs:
       okProdBucket:
         description: 'Deploy PROD bucket?'
         required: true
-        type: boolean
-        
+        type: choice
+        default: abort
+        options:
+        - proceed
+        - abort        
 
 jobs:
 
