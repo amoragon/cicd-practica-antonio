@@ -5,6 +5,16 @@ on:
     branches:
     - main
   pull_request:
+  workflow_dispatch:
+    inputs:
+      okProdBucket:
+        description: 'Deploy PROD bucket?'
+        required: true
+        type: choice
+        default: abort
+        options:
+        - proceed
+        - abort
 
 jobs:
 
@@ -57,7 +67,6 @@ jobs:
       # On push to main, build or change infrastructure according to Terraform configuration files
     - name: Terraform Apply
       working-directory: ./infra
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -var-file="dev.tfvars" -auto-approve
 
   ############################
@@ -68,12 +77,13 @@ jobs:
     name: 'S3 Prod Bucket'
     runs-on: ubuntu-latest
     environment: production
+    needs: [s3-dev-bucket]
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
-
+    
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
@@ -109,5 +119,7 @@ jobs:
       # On push to main, build or change infrastructure according to Terraform configuration file
     - name: Terraform Apply
       working-directory: ./infra
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -var-file="prod.tfvars" -auto-approve
+      if: ${{ github.event.inputs.okProdBucket == 'proceed' }}
+      run: |
+        echo ${{ github.event.inputs.okProdBucket }}
+        terraform apply -var-file="prod.tfvars" -auto-approve
